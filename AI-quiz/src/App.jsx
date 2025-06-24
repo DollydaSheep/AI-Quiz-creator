@@ -14,6 +14,25 @@ function App() {
   const[currentQuestion,setCurrentQuestion] = useState(0);
 
   const[fade,setFade] = useState(true);
+  const[popCheck,setPopCheck] = useState(false);
+  const[popScale,setPopScale] = useState(false);
+
+  const[checkCount,setCheckCount] = useState(0);
+
+  const popupAnimation = () => {
+    setPopScale(true);
+    setPopCheck(true);
+    setTimeout(()=>{
+      setPopScale(false)
+    },50);
+  }
+
+  const slideAnimation = () => {
+    setFade(false);
+    setTimeout(()=>{
+      setFade(true);
+    },100);
+  }
 
   const handleChange = (e) => {
     setPdfFile(e.target.files[0]);
@@ -51,9 +70,11 @@ function App() {
     e.target.classList.remove('hover:bg-blue-600');
 
     e.target.classList.add(isCorrect ? 'bg-green-500' : 'bg-red-500');
-
+    {isCorrect ? setCheckCount(prev=>prev+1) : ""}
     
-    setTimeout(()=>setFade(false),800)
+    popupAnimation();
+
+    setTimeout(()=>{setFade(false);setPopCheck(false)},800)
     setTimeout(()=>{
       setCurrentQuestion(prev => prev + 1);
       e.target.classList.remove('bg-green-500')
@@ -112,7 +133,13 @@ function App() {
         </div>
       </div>
     )}
-      {currentQuestion === questions.length && questions.length !== 0 && (<><button onClick={()=>setCurrentQuestion(0)}>Retry</button></>)}
+    <h1 className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-shadow-md bg-gray-800 border border-white p-8 rounded-md pointer-events-none transition duration-150 ${popCheck ? 'opacity-100' : 'opacity-0'} ${popScale ? 'scale-125' : 'scale-100'}`}>{checkCount}/5</h1>
+      {currentQuestion === questions.length && questions.length !== 0 && (<>
+      <div className={`border border-white mb-4 p-6 transition duration-200 ${fade ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-12'} `}>
+        <h1>{checkCount}/5</h1>
+      </div>
+      <button onClick={()=>setCurrentQuestion(0)}>Retry</button>
+      </>)}
     </>
   )
 }
