@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import './App.css'
 import { TrophySpin } from "react-loading-indicators"
+import { FormInput } from './Components/FormInput';
+import { QuestionCard } from './Components/QuestionCard';
+import { ResultCard } from './Components/ResultCard';
 
 function App() {
 
@@ -110,71 +113,22 @@ function App() {
   return (
     <>
       {questions.length == 0 && (
-        <form onSubmit={handleSubmit} className="mb-8 space-x-4">
-          <input
-            type="file"
-            name="pdfFile"
-            required
-            onChange={handleChange}
-            className="text-white file:bg-blue-600 file:border-0 file:py-2 file:px-4 file:rounded-md file:text-sm file:font-semibold file:cursor-pointer"
-          />
-          <input
-            type="submit"
-            value="Submit"
-            className="bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded-md cursor-pointer"
-          />
-          <p>Questions</p>
-          <input type="radio" name='questionCount' onClick={()=>setQuestionCount(5)} value={5} required/>
-          <label className='mr-4' htmlFor="">5</label>
-          <input type="radio" name='questionCount' onClick={()=>setQuestionCount(10)} value={10}/>
-          <label className='mr-4' htmlFor="">10</label>
-          <input type="radio" name='questionCount' onClick={()=>setQuestionCount(20)} value={20}/>
-          <label className='mr-4' htmlFor="">20</label>
-          
-        </form>
+        <FormInput setQuestionCount={setQuestionCount} handleChange={handleChange} handleSubmit={handleSubmit}/>
       )}
       {questions.length !== 0 && currentQuestion < questions.length && (
-      <div
-        className={`w-full max-w-xl p-6 rounded-lg border border-white shadow-lg transition-opacity duration-300 ease-in-out ${
-          fade ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        <h3 className="text-lg font-semibold mb-4 text-center">
-          {questions[currentQuestion]}
-        </h3>
-        <div className="space-y-2">
-          {options[currentQuestion].map((o, oindex) => (
-            <p
-              key={oindex}
-              className="cursor-pointer bg-gray-800 hover:bg-blue-600 transition-colors duration-200 px-4 py-2 rounded-md text-center"
-              onClick={(e) =>
-                handleCorrectAnswer(currentQuestion, oindex, e)
-              }
-            >
-              {o}
-            </p>
-          ))}
-        </div>
-      </div>
+        <QuestionCard currentQuestion={currentQuestion} handleCorrectAnswer={handleCorrectAnswer} fade={fade} questions={questions} options={options} />
     )}
     <h1 className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-shadow-md bg-gray-800 border border-white p-8 rounded-md pointer-events-none transition duration-150 ${popCheck ? 'opacity-100' : 'opacity-0'} ${popScale ? 'scale-125' : 'scale-100'}`}>{checkCount}/{questionCount}</h1>
-      {currentQuestion === questions.length && questions.length !== 0 && (<>
-      <div className={`border border-white mb-4 p-6 transition duration-200 ${fade ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-12'} `}>
-        <h1>{checkCount}/{questionCount}</h1>
-      </div>
-      <button onClick={()=>{
-        setCurrentQuestion(0);
-        setCheckCount(0);
-        }}>Retry</button>
-      <button className='ml-4' onClick={()=>setPopup(true)}>Save</button>
-      <div className={`absolute w-screen h-screen top-0 left-0 flex backdrop-blur-xs justify-center items-center transition duration-200 ${popup ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-        <div className='relative w-md h-1/3 flex justify-center items-center bg-blue-100/20 rounded-lg'>
-          <button className='absolute top-0 right-0 m-4' onClick={()=>setPopup(false)}>Back</button>
-          <input type="text" onChange={(e)=>setQuizName(e.target.value)} className='bg-white text-black m-4 h-8 rounded-md p-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150' placeholder='Name of Quiz'/>
-          <input type="submit" className="bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded-md cursor-pointer" value="Confirm" onClick={handleSaveQuiz} />
-        </div>
-      </div>
-      </>)}
+      {currentQuestion === questions.length && questions.length !== 0 && (
+        <ResultCard setCurrentQuestion={setCurrentQuestion} 
+                    setCheckCount={setCheckCount} 
+                    checkCount={checkCount} 
+                    questionCount={questionCount} 
+                    popup={popup} setPopup={setPopup} 
+                    setQuizName={setQuizName} 
+                    handleSaveQuiz={handleSaveQuiz}
+                    fade={fade}/>
+      )}
       <button className='m-4' onClick={()=>setSavedPopup(true)}>Saved Quizzes</button>
       {questions.length !== 0 && (<button className='' onClick={()=>{
         setCurrentQuestion(0);
