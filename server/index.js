@@ -36,6 +36,7 @@ function getResult(py){
 
 app.post('/prompt',upload.single('pdfFile'),async (req,res) => {
 
+    const questionCount = req.query.questionCount;
     
     if(req.file){
         console.log(req.file.filename);
@@ -46,7 +47,7 @@ app.post('/prompt',upload.single('pdfFile'),async (req,res) => {
     let prompt = await getResult(py)
     
 
-    prompt += `make a quiz of 5 items each with 4 abcd choices, surround each choices with / and surround the questions with =. For example: =question question question= /a. answer/ 
+    prompt += `make a quiz of ${questionCount} items each with 4 abcd choices, surround each choices with / and surround the questions with =. For example: =question question question= /a. answer/ 
     /b. answer/ 
     /c. answer/ 
     /d. answer/`;
