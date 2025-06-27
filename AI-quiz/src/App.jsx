@@ -16,8 +16,14 @@ function App() {
   const[fade,setFade] = useState(true);
   const[popCheck,setPopCheck] = useState(false);
   const[popScale,setPopScale] = useState(false);
+  const[popup,setPopup] = useState(false);
+  const[savedPopup,setSavedPopup] = useState(false);
 
   const[checkCount,setCheckCount] = useState(0);
+
+  const[quizName,setQuizName] = useState("");
+  const[isTaken,setIsTaken] = useState(false);
+  const[jsonObject,setJsonObject] = useState(null);
 
   const popupAnimation = () => {
     setPopScale(true);
@@ -25,13 +31,6 @@ function App() {
     setTimeout(()=>{
       setPopScale(false)
     },50);
-  }
-
-  const slideAnimation = () => {
-    setFade(false);
-    setTimeout(()=>{
-      setFade(true);
-    },100);
   }
 
   const handleChange = (e) => {
@@ -53,6 +52,7 @@ function App() {
       })
 
       const data = await res.json();
+      setJsonObject(data);
       setQuestions(data.questions);
       setOptions(data.answerOpt);
       setCorrectAnswer(data.correctAnswer);
@@ -62,6 +62,16 @@ function App() {
     } catch (err){
       console.error(err);
     }
+  }
+
+  const handleSaveQuiz = () => {
+    if(localStorage.getItem(quizName)){
+      alert("Name is Taken. Please Choose Another.")
+    }else{
+      // localStorage.setItem(quizName,JSON.stringify(jsonObject));
+      setPopup(false);
+    }
+    
   }
 
   const handleCorrectAnswer = (currentQuestion,oindex,e) => {
@@ -138,8 +148,56 @@ function App() {
       <div className={`border border-white mb-4 p-6 transition duration-200 ${fade ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-12'} `}>
         <h1>{checkCount}/5</h1>
       </div>
-      <button onClick={()=>setCurrentQuestion(0)}>Retry</button>
+      <button onClick={()=>{
+        setCurrentQuestion(0);
+        setCheckCount(0);
+        }}>Retry</button>
+      <button className='ml-4' onClick={()=>setPopup(true)}>Save</button>
+      <div className={`absolute w-screen h-screen top-0 left-0 flex backdrop-blur-xs justify-center items-center transition duration-200 ${popup ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        <div className='relative w-md h-1/3 flex justify-center items-center bg-blue-100/20 rounded-lg'>
+          <button className='absolute top-0 right-0 m-4' onClick={()=>setPopup(false)}>Back</button>
+          <input type="text" onChange={(e)=>setQuizName(e.target.value)} className='bg-white text-black m-4 h-8 rounded-md p-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150' placeholder='Name of Quiz'/>
+          <input type="submit" className="bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded-md cursor-pointer" value="Confirm" onClick={handleSaveQuiz} />
+        </div>
+      </div>
       </>)}
+      <button className='m-4' onClick={()=>setSavedPopup(true)}>Saved Quizzes</button>
+      {questions.length !== 0 && (<button className='' onClick={()=>{
+        setCurrentQuestion(0);
+        setCheckCount(0);
+        setQuestions([]);
+        setOptions([]);
+        setCorrectAnswer([]);
+      }}>Back</button>)}
+      {savedPopup && (
+        <>
+          <div className='absolute w-screen h-screen top-0 left-0 backdrop-blur-xs flex flex-col justify-center items-center'>
+
+            <div className='relative w-md h-1/3'> 
+
+              <h1>Saved Quizzes</h1>
+              <button className='absolute right-0 -top-10' onClick={()=>setSavedPopup(false)}>Back</button>
+              <div className='bg-blue-100/20 rounded-lg grid grid-cols-2 grid-rows-[repeat(4,minmax(42px,1fr))] overflow-y-auto gap-4 p-4 h-48'>
+                {Object.entries(localStorage).map(([key, value])=>{
+                  const parsedData = JSON.parse(value);
+                  return <button onClick={()=>{
+                    setQuestions(parsedData.questions);
+                    setOptions(parsedData.answerOpt);
+                    setCorrectAnswer(parsedData.correctAnswer);
+                    setSavedPopup(false);
+                  }}>{key}</button> 
+                })}
+                
+                
+              </div>
+
+            </div>
+            
+            
+          </div>
+        </>
+      )}
+      
     </>
   )
 }
