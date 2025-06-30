@@ -4,6 +4,7 @@ import { TrophySpin } from "react-loading-indicators"
 import { FormInput } from './Components/FormInput';
 import { QuestionCard } from './Components/QuestionCard';
 import { ResultCard } from './Components/ResultCard';
+import { SavedQuizzesCard } from './Components/SavedQuizzesCard';
 
 function App() {
 
@@ -116,7 +117,11 @@ function App() {
         <FormInput setQuestionCount={setQuestionCount} handleChange={handleChange} handleSubmit={handleSubmit}/>
       )}
       {questions.length !== 0 && currentQuestion < questions.length && (
-        <QuestionCard currentQuestion={currentQuestion} handleCorrectAnswer={handleCorrectAnswer} fade={fade} questions={questions} options={options} />
+        <QuestionCard currentQuestion={currentQuestion} 
+                      handleCorrectAnswer={handleCorrectAnswer} 
+                      fade={fade} 
+                      questions={questions} 
+                      options={options} />
     )}
     <h1 className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-shadow-md bg-gray-800 border border-white p-8 rounded-md pointer-events-none transition duration-150 ${popCheck ? 'opacity-100' : 'opacity-0'} ${popScale ? 'scale-125' : 'scale-100'}`}>{checkCount}/{questionCount}</h1>
       {currentQuestion === questions.length && questions.length !== 0 && (
@@ -137,43 +142,15 @@ function App() {
         setOptions([]);
         setCorrectAnswer([]);
       }}>Back</button>)}
-      {savedPopup && (
-        <>
-          <div onClick={()=>setSavedIsClicked({isClicked: false, parsedData : ""})} className='absolute w-screen h-screen top-0 left-0 backdrop-blur-xs flex flex-col justify-center items-center transition duration-200'>
-
-            <div className='relative w-md h-1/3' onClick={(e) => e.stopPropagation()}> 
-
-              <h1>Saved Quizzes</h1>
-              <button className='absolute right-0 -top-10' onClick={()=>setSavedPopup(false)}>Back</button>
-              <div className='bg-blue-100/20 rounded-lg grid grid-cols-2 grid-rows-[repeat(4,minmax(42px,1fr))] overflow-y-auto gap-4 p-4 h-4/5'>
-                {Object.entries(localStorage).map(([key, value])=>{
-                  const parsedData = JSON.parse(value);
-                  return <button onClick={()=>{
-                    setSavedIsClicked({isClicked: true,parsedData: parsedData,key: key});
-                  }}>{key}</button> 
-                })}
-                
-                
-              </div>
-
-            </div>
-            <div className='flex'>
-              <button className={`mr-4 ${savedIsClicked.isClicked ? "pointer-events-auto text-white" : "pointer-events-none text-gray-500"} transition duration-200`} onClick={()=>{
-                setQuestions(savedIsClicked.parsedData.questions);
-                setQuestionCount(savedIsClicked.parsedData.questions.length)
-                setOptions(savedIsClicked.parsedData.answerOpt);
-                setCorrectAnswer(savedIsClicked.parsedData.correctAnswer);
-                setSavedPopup(false);
-              }}>Open</button>
-              <button className={`${savedIsClicked.isClicked ? "pointer-events-auto text-white" : "pointer-events-none text-gray-500"}`} onClick={()=>{
-                setSavedPopup(false);
-                localStorage.removeItem(savedIsClicked.key);
-              }}>Delete</button>
-            </div>
-            
-          </div>
-        </>
-      )}
+        
+      <SavedQuizzesCard setSavedIsClicked={setSavedIsClicked} 
+                        savedIsClicked={savedIsClicked} 
+                        savedPopup={savedPopup} 
+                        setSavedPopup={setSavedPopup} 
+                        setQuestions={setQuestions} 
+                        setQuestionCount={setQuestionCount} 
+                        setOptions={setOptions} 
+                        setCorrectAnswer={setCorrectAnswer}/>
       
     </>
   )
