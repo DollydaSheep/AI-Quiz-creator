@@ -1,8 +1,10 @@
 import React from 'react'
+import { Card } from './Card'
 
 export const FormInput = ({setQuestionCount, handleChange, handleSubmit}) => {
   return (
-    <form onSubmit={handleSubmit} className="mb-8 space-x-4">
+    <Card>
+      <form onSubmit={handleSubmit} className="mb-8 mx-4">
         <input
         type="file"
         name="pdfFile"
@@ -22,7 +24,7 @@ export const FormInput = ({setQuestionCount, handleChange, handleSubmit}) => {
         <label className='mr-4' htmlFor="">10</label>
         <input type="radio" name='questionCount' onClick={()=>setQuestionCount(20)} value={20}/>
         <label className='mr-4' htmlFor="">20</label>
-        
-    </form>
+      </form>
+    </Card>
   )
 }

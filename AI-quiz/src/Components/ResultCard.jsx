@@ -5,6 +5,10 @@ export const ResultCard = ({setCurrentQuestion, setCheckCount, checkCount, quest
     <>
       <div className={`border border-white mb-4 p-6 transition duration-200 ${fade ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-12'} `}>
         <h1>{checkCount}/{questionCount}</h1>
+        <p>You got {checkCount} {checkCount !== 1 ? 'Answers' : 'Answer'} Correct!</p>
+        <div className={`w-full h-2 bg-white rounded-lg overflow-hidden transition duration-200 my-4 cursor-pointer outline-transparent hover:outline hover:outline-indigo-600 hover:scale-y-155`}>
+          <div className={`h-2 bg-green-500 rounded-lg transition duration-700 ${fade ? 'translate-0' : '-translate-full'}`} style={{width: `${(checkCount / questionCount) * 100}%`}} ></div>
+        </div>
       </div>
       <button onClick={()=>{
         setCurrentQuestion(0);

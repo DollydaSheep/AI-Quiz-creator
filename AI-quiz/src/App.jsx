@@ -150,7 +150,8 @@ function App() {
                         setQuestions={setQuestions} 
                         setQuestionCount={setQuestionCount} 
                         setOptions={setOptions} 
-                        setCorrectAnswer={setCorrectAnswer}/>
+                        setCorrectAnswer={setCorrectAnswer}
+                        setLoading={setLoading}/>
       
     </>
   )
